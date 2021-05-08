@@ -1,0 +1,8 @@
+[package]
+name = "konigsberg"
+version = "0.1"
+lean_version = "leanprover-community/lean:3.30.0"
+path = "src"
+
+[dependencies]
+mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "58e990d93aad9617b09bff5ca692b133e176e635"}
