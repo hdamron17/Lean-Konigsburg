@@ -121,10 +121,22 @@ begin
   rw list.singleton_append,
 end
 
-lemma list_cons_unzip_sip_fst {V : Type u} (a : V) (l : list V) :
-((a :: l).zip l).unzip.fst = a :: (l.init) :=
+lemma list_cons_unzip_sip_fst {V : Type u} (a b : V) (l : list V) :
+((a :: b :: l).zip (b :: l)).unzip.fst = a :: ((b :: l).init) :=
 begin
-  sorry
+  simp,
+  conv in ((b :: l).zip l){
+    rw ← list.init_append_last (list.cons_ne_nil b l),
+    congr,
+    skip,
+    rw ← list.append_nil l,
+  },
+  rw list.zip_append,
+  rw list.zip_nil_right,
+  rw list.append_nil,
+  rw list.unzip_zip,
+  simp,
+  simp,
 end
 
 lemma circuit_indeg_eq_outdeg {W : walk G} (closed: W.closed) (v : V):
@@ -156,7 +168,7 @@ begin
 
       -- At least two elements
       rw list.tail_cons,
-      rw list_cons_unzip_sip_fst hd (tl_hd :: tl_tl),
+      rw list_cons_unzip_sip_fst hd tl_hd tl_tl,
       rw list.rotate_cons_succ,
       simp,
       rw list.init_append_last',
