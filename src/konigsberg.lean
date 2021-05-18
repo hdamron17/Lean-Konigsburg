@@ -191,14 +191,26 @@ begin
   refl,
 end
 
-lemma eulerian_circuit_degree_eq {W : walk G} (euler: W.eulerian) (closed: W.closed) (v : V):
+lemma eulerian_degree_eq {W : walk G} (euler: W.eulerian) (v : V):
 W.degree v = G.degree v :=
 begin
   -- TODO possibly use equiv.of_bijective and fintype.of_equiv_card
+  -- TODO possibly prove handshake lemma for multigraphs and then make
+  --      a contradiction if there exists one vertex with smaller degree
+  --      in the walk than the graph (since it can't be larger)
+  rw walk.degree,
+  simp,
+  rw [walk.in_degree,walk.out_degree],
+  rw [multi_graph.degree, multi_graph.neighbor_set_simple_finset],
+  rw walk.eulerian at euler,
+  let edges_count_eq_adj := funext (euler v),
+  simp at edges_count_eq_adj,
+  rw ← edges_count_eq_adj,
+
   sorry
 end
 
-theorem eulerian_even_degree (conn: G.connected):
+theorem eulerian_circuit_iff_even_degrees (conn: G.connected):
 (∀ (v : V), even (G.degree v)) ↔ ∃ (W : walk G), W.eulerian ∧ W.closed :=
 begin
   apply iff.intro,
@@ -207,9 +219,9 @@ begin
   intro exists_euler,
   cases exists_euler with W W_euler_circuit,
   cases W_euler_circuit with W_euler W_closed,
-  
+
   intro v,
-  rw ← eulerian_circuit_degree_eq G W_euler W_closed,
+  rw ← eulerian_degree_eq G W_euler,
   apply circuit_degree_even G W_closed,
 
   -- Right direction
